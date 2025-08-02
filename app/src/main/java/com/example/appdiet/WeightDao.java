@@ -17,6 +17,5 @@ public interface WeightDao {
     //最新の一件だけのデータを取得する
     @Query("SELECT * FROM WeightEntry ORDER BY id DESC LIMIT 1")
     WeightEntry getLatest();
-
 }
 
