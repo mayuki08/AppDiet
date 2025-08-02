@@ -4,6 +4,9 @@ import androidx.room.Room;
 
 import java.io.*;
 import java.util.Scanner;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import android.content.Context;
 
@@ -13,9 +16,10 @@ public class WeightTracker {
     //private static final String FILE_NAME = "weight_data.txt"; // 体重を保存するファイル
     //private static final String USER_INFOMATION = "userinfomation.txt";
     String userName;
-    int firstweight;
-    int height;
-    int goalsetting;
+    double firstweight;
+
+     double height;
+    double goalsetting;
 
     private final Context context;
 
@@ -59,8 +63,9 @@ public class WeightTracker {
     }
 
     //初回入力
+    private boolean firsttime = true;
     public void firstRecode() {
-        boolean firsttime = true;
+
         if(firsttime) {
             Scanner sc = new Scanner(System.in);
 
@@ -70,17 +75,17 @@ public class WeightTracker {
 
             //現在の体重の入力
             System.out.println("体重を入力してください。");
-            firstweight = sc.nextInt();
+            firstweight = sc.nextDouble();
 
             //目標体重を入力
             System.out.println("目標体重を入力してください。");
-            goalsetting = sc.nextInt();
+            goalsetting = sc.nextDouble();
 
             //身長の入力
             System.out.println("身長を入力してください。");
-            height = sc.nextInt();
+            height = sc.nextDouble();
 
-            //saveUserInfomation(userName, firstweight, goalsetting, height);
+            saveUserInfomation(userName, firstweight, goalsetting, height);
 
             firsttime = false;//二回目以降実行されないように
 
@@ -132,7 +137,7 @@ public class WeightTracker {
     //保存方法をRoomに変更
     private void saveCurrentWeight(double weight) {
         // 日付を取得（例："2025-08-01"）
-        String date = java.time.LocalDate.now().toString();
+        String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         // エントリ作成
         WeightEntry entry = new WeightEntry();
@@ -148,14 +153,41 @@ public class WeightTracker {
 
             db.weightDao().insert(entry);
 
-            System.out.println("体重をデータベースに保存しました。");
+            System.out.println("記録を保存しました。");
         } catch(Exception e) {
-            System.out.println("データベースの保存に失敗しました。");
+            System.out.println("記録の保存に失敗しました。");
             e.printStackTrace();//デバッグ用のエラー内容
         }
     }
 
-    private void saveUserInfomation(){
+    //初回入力の内容をRoomに保存
+    private void saveUserInfomation(String name,double weight,double goal,double height){
+        //日付の取得
+        String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        //エントリーの作成
+        UserInfomationEntry entry = new UserInfomationEntry();
+
+        entry.date = date;
+        entry.weight = weight;
+        entry.height = height;
+        entry.goal = goal;
+        entry.username = name;
+
+        //データベースに保存
+        try{
+            SaveRoom db = Room.databaseBuilder(
+                    context.getApplicationContext(),
+                    SaveRoom.class, "userinfomation-database"
+            ).allowMainThreadQueries().build(); // 本番は非同期にする
+
+            db.userInfomationDaoDao().insert(entry);
+
+            System.out.println("あなたの情報を保存しました。");
+        } catch(Exception e) {
+            System.out.println("情報の保存に失敗しました。");
+            e.printStackTrace();//デバッグ用のエラー内容
+        }
 
     }
 }

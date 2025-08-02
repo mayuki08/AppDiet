@@ -2,14 +2,13 @@ package com.example.appdiet;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
 @Entity
-public class WeightEntry {
-
+public class UserInfomationEntry {
     @PrimaryKey(autoGenerate = true)
     public int id;
-
-    public float weight;
-
+    public String username;
+    public double weight;
+    public double height;
+    public double goal;
     public String date;
 }
