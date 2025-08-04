@@ -181,7 +181,7 @@ public class WeightTracker {
                     SaveRoom.class, "userinfomation-database"
             ).allowMainThreadQueries().build(); // 本番は非同期にする
 
-            db.userInfomationDaoDao().insert(entry);
+            db.userInfomationDao().insert(entry);
 
             System.out.println("あなたの情報を保存しました。");
         } catch(Exception e) {
